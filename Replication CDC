@@ -1,0 +1,19 @@
+Planning on enabling Change Data Capture(CDC) & Transactional Replication on same database in SQL Server ? Wondering what might be the potential issues coming your way? (Share & help others)
+
+·       Verify that both CDC and transactional replication are configured correctly on the database.
+
+·       Disable CDC for all tables that are being replicated, as replication conflicts can occur if both features are active on the same table.
+
+·       Use the sp_repldone procedure to mark the transactions that have been replicated as completed. This will prevent CDC from trying to track changes that have already been replicated.
+
+·       Make sure that the log reader agent for replication is running and up to date. This will ensure that all transactions are captured by the replication process.
+
+·       Check the distribution database for any errors or issues that may be causing problems with replication. Resolve any issues that are found.
+
+·       Restart the CDC capture process, and monitor the database to ensure that there are no further issues.
+
+·       If necessary, increase the log retention period for CDC to ensure that all transactions are captured and tracked properly.
+
+·       Use the sys.sp_cdc_change_job stored procedure to enable CDC for tables that are not being replicated, if necessary.
+
+·       Finally, test the database to ensure that both CDC and replication are working correctly, and monitor the database for any further issues that may arise.
