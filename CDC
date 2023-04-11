@@ -1,0 +1,48 @@
+I am sharing some insight onto what Change Data Capture (CDC) is and how it helps us?
+If you have used it in your environment, please do share what challenges did you faced with it?
+
+It is a amazing feature in SQL Server that captures changes made to data in a table and stores those changes in a separate table for downstream processing.
+·       The feature is highly configurable and can be customized to fit a wide range of use cases.
+
+·       CDC is enabled at the database level using the sys.sp_cdc_enable_db system stored procedure:
+
+EXEC sys.sp_cdc_enable_db;
+
+·       Once CDC is enabled for the database, individual tables can be enabled for CDC using the sys.sp_cdc_enable_table system stored procedure:
+
+EXEC sys.sp_cdc_enable_table
+ @source_schema = N'dbo',
+ @source_name = N'MyTable',
+ @role_name = NULL,
+ @filegroup_name = N'CDC';
+
+·       After CDC is enabled for a table, changes can be captured using the cdc.fn_cdc_get_all_changes function:
+
+SELECT * FROM cdc.fn_cdc_get_all_changes_dbo_MyTable(
+ sys.fn_cdc_get_min_lsn('dbo_MyTable'),
+  sys.fn_cdc_get_max_lsn(),
+ 'all');
+
+·       This function returns a result set with columns for the changed data as well as metadata such as the operation type (insert, update, delete) and the transaction ID:
+bash
+
+__$start_lsn
+__$seqval
+__$operation
+__$update_mask
+ID
+Name
+Email
+
+·       CDC maintains a table to track the LSN (Log Sequence Number) of the most recent change captured, which can be retrieved using the sys.fn_cdc_get_max_lsn function:
+
+SELECT sys.fn_cdc_get_max_lsn();
+
+·       CDC tables can be cleaned up using the sys.sp_cdc_cleanup_change_table system stored procedure, which removes entries older than a specified retention period:
+
+EXEC sys.sp_cdc_cleanup_change_table
+ @capture_instance = N'dbo_MyTable',
+ @low_water_mark = NULL,
+ @threshhold = 5000;
+
+Let me know if you learnt something new today. Happy Learning!
