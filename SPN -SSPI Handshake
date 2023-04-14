@@ -1,0 +1,100 @@
+https://bobcares.com/blog/sql-error-17806/
+
+SQL error 17806 : Error code 0x8009030c – How to fix
+by Nicky Mathew | Dec 30, 2020
+
+Wondering how to fix SQL error 17806? We can help you.
+
+As part of our Server Management Services, we assist our customers with several SQL queries on a daily basis.
+
+Today, let us look into the details of this error and its possible solutions.
+
+
+ 
+
+SQL error 17806
+If we are using Windows authentication to connect to a SQL Server in Windows 2003 and above, we may encounter the following error:
+
+SSPI handshake failed with error code 0x8009030c, state 14 while establishing a connection with integrated security; the connection has been closed. 
+Reason: AcceptSecurityContext failed. The Windows error code indicates the cause of failure. The logon attempt failed.
+
+Error: 17806, Severity: 20, State: 14.
+This error can happen due to the Active Directory configuration issue or Network related issues.
+
+In Windows 2003 and above, the default method of establishing a connection is Kerberos. However, if it fails, 
+we can establish a connection using NTLM. This may register on the SQL Server error log due to Kerberos failure.
+
+SQL error 17806
+
+ 
+
+Cause of SQL error 17806
+SQL Server engine account running with a Domain service account, and that account locked at the time a Kerberos connection attempt. 
+The connection would work, but it would kick down to NTLM.
+Failed Kerberos Authentication to connect to SQL Server.
+To confirm if we have any database connection using Kerberos authentication, run:
+SELECT distinct auth_scheme FROM sys.dm_exec_connections
+If we only see NTLM and SQL then, there is no Kerberos connection.
+To use Kerberos, the client and SQL Server must be in the same domain and a Service Principal Name (SPN) must be registered with Active Directory for 
+the SQL Server service account.
+We can check if the service account already has SPN, by running:
+
+setspn -l 
+If we don’t see anything starting with MSSQLSvc\ then the account is not set up with SPN.
+
+SSPI handshake errors can be Time/Clock difference between the client clock differs server clock.
+[Looking for more updates? Contact us now!]
+
+ 
+
+Solutions for SQL error 17806
+Let us now focus on some methods our Support Engineers suggest in order to fix this error.
+
+Method 1:
+
+Go to register start –> run … Regedit
+Go to: HKLM\System\CurrentControlSet\Control\LSA
+Then add DWORD value “DisableLoopbackCheck”
+Set this value to 1
+Reboot after making this change.
+Usually, this will affect registry change.
+
+Method 2:
+
+Restart the SQL browser services.
+
+Method 3:
+
+Reboot the misbehaving Domain Controller
+Correct Client to Server time
+Create an SPN for SQL server.
+We can manually register SPN as a Domain Administrator.
+To create an SPN for the NetBIOS name of the SQL Server we use the following command:
+
+setspn –A MSSQLSvc/:1433 
+To create an SPN for the FQDN of the SQL Server we use the following command:
+
+setspn -A MSSQLSvc/:1433 
+If SQL Server service account grants “Validated write to service principal name” privilege in Active Directory, 
+SQL Server database engine will register itself when it starts and unregisters at shutdown.
+
+If the Domain Administrators do not permit this setting then we should manually register the SPN and the SSPI error will go away.
+
+Also, the SQL Server service account must grant “Account is trusted for delegation” privilege in Active Directory. 
+If the SQL Server connects to another SQL Server using Linked Server then the server must also grant “Trust this computer for delegation 
+to any service” privilege.
+
+For a named instance, we can use the FQDN of the named instance instead of SQL Server FQDN and use the port number.
+
+For a clustered server, we should use the FQDN of the SQL Server virtual name. In this case, we will need two entries, one with port name and one without such as:
+
+setspn -A MSSQLSvc/ 
+setspn -A MSSQLSvc/:1433 
+Kerberos authentication works when SQL Server, Service Account and Windows account accessing the SQL Server are in the same windows domain.
+
+[Stuck with the error? We’d be happy to assist!]
+
+ 
+
+Conclusion
+In short, SQL error 17806 happen due to Active Directory configuration issue or Network issues. Today, we saw some methods our Support Techs found the best fit in order to solve this error.
