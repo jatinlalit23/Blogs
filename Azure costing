@@ -110,3 +110,23 @@ For Azure SQL Database costing, the pricing depends on several factors, such as 
 4. **Hyperscale Tier**: This offers scalable compute and storage, priced lower for compute by up to 35%, making it competitive for larger-scale workloads【14†source】.
 
 You can use Azure’s **pricing calculator** to get a precise estimate based on your specific needs, which considers factors like region, compute tier, and storage.
+
+
+
+
+****************************************************************************
+
+
+Managed Instance, 
+Business Critical, 
+Single Instance, 
+Premium-series, 
+8 vCore, 
+Primary Instance, 
+Compute redundancy - Locally Redundant, 
+1 instance(s) x 730 Hours, 
+SQL license (AHB), 
+640 GB Storage, 
+Backup storage redundancy - LRS, 600 GB Point-In-Time Restore, 
+500 GB Long Term Retention with 4 Weekly backup retention, 
+2 Monthly backup retention
